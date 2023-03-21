@@ -31,10 +31,6 @@ export class SyncController {
 
             const unsyncedRaindrops: any[] = []
 
-            // const latestRaindrops = await this.raindropGateway.getSavedRaindrops({ page: 1, count: 1})
-
-            // return latestRaindrops
-
             do {
                 const latestRaindrops = await this.raindropGateway.getSavedRaindrops({ page, count: 5 })
 
@@ -51,10 +47,27 @@ export class SyncController {
                 page += 1
             } while (!lastRaindropSinceSyncFound)
 
-
             return unsyncedRaindrops
         } catch (error) {
             console.error(`Something went wrong in getRaindropsSinceLastSyncTime: ${error}`)
         }
+    }
+
+    async syncPocketAndRaindrop() {
+        const pocketItemsSinceLastSyncTime = await this.getPocketItemsSinceLastSyncTime() || []
+        const raindropsSinceLastSynctime = await this.getRaindropsSinceLastSyncTime() || []
+
+        // Sync new Pocket items to Raindrop
+        for (const item of pocketItemsSinceLastSyncTime) {
+            await this.raindropGateway.addRaindrop({ link: item.resolved_url })
+        }
+
+        // Sync new raindrops to Pocket
+        for (const raindrop of raindropsSinceLastSynctime) {
+            await this.pocketGateway.addItem({ url: raindrop.link })
+        }
+
+        // Update last sync time after all items have been synced.
+        this.lastSyncTime = parseInt(DateTime.now().toSeconds().toFixed(0), 10)
     }
 }
