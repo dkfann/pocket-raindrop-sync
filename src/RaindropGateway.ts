@@ -1,13 +1,13 @@
 import fetch from 'node-fetch'
 
-interface GetRaindropsResponse {
+export interface GetRaindropsResponse {
     result: boolean
     items: Raindrop[]
     count: number
     collectionId: number
 }
 
-interface Raindrop {
+export interface Raindrop {
     excerpt: string
     note: string
     type: string // An enum

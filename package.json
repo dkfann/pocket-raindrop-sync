@@ -8,6 +8,7 @@
     "tsc": "tsc"
   },
   "dependencies": {
+    "bree": "^9.1.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "forwarded": "^0.2.0",
