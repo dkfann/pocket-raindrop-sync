@@ -3,12 +3,24 @@ import { SyncController } from './src/SyncController'
 import { PocketGateway } from './src/PocketGateway'
 import { RaindropGateway } from './src/RaindropGateway'
 import dotenv from 'dotenv'
+import Bree from 'bree'
+import path from 'path'
 
 dotenv.config()
 
 const app = express()
 
 app.use(express.json())
+
+const bree = new Bree({
+    jobs: [
+        {
+            name: 'syncJob.ts',
+            path: path.join(__dirname, 'src', 'syncJob.ts'),
+            interval: '1h'
+        }
+    ]
+})
 
 const pocketConsumerKey = process.env.POCKET_CONSUMER_KEY!
 const pocketAccessToken = process.env.POCKET_ACCESS_TOKEN!
@@ -34,6 +46,17 @@ app.get('/raindrop', async (_, res) => {
     res.send(items)
 })
 
-app.listen(3000, () => {
+app.post('/sync', async (_, res) => {
+    try {
+        await syncController.syncPocketAndRaindrop()
+
+        res.sendStatus(200)
+    } catch (error) {
+        console.error(`Something went wrong with performing the sync: ${error}`)
+    }
+})
+
+app.listen(3000, async () => {
     console.log('Started server')
+    bree.start()
 })

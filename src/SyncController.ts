@@ -1,5 +1,5 @@
 import { PocketGateway } from './PocketGateway'
-import { RaindropGateway } from './RaindropGateway'
+import { RaindropGateway, Raindrop } from './RaindropGateway'
 import { DateTime } from 'luxon'
 
 export class SyncController {
@@ -10,7 +10,7 @@ export class SyncController {
     constructor(pocketGateway: PocketGateway, raindropGateway: RaindropGateway) {
         this.pocketGateway = pocketGateway
         this.raindropGateway = raindropGateway
-        this.lastSyncTime = parseInt(DateTime.now().minus({ hours: 24 }).toSeconds().toFixed(0), 10)
+        this.lastSyncTime = parseInt(DateTime.now().minus({ hours: 1 }).toSeconds().toFixed(0), 10)
     }
 
     async getPocketItemsSinceLastSyncTime() {
@@ -29,7 +29,7 @@ export class SyncController {
 
             let page = 0
 
-            const unsyncedRaindrops: any[] = []
+            const unsyncedRaindrops: Raindrop[] = []
 
             do {
                 const latestRaindrops = await this.raindropGateway.getSavedRaindrops({ page, count: 5 })
@@ -62,10 +62,16 @@ export class SyncController {
             await this.raindropGateway.addRaindrop({ link: item.resolved_url })
         }
 
+        console.log(`Syncing these pocket items: ${pocketItemsSinceLastSyncTime.map(item => item.given_url)}`)
+        console.log(`The current time is: ${DateTime.now().toLocaleString(DateTime.DATETIME_MED)}`)
+
         // Sync new raindrops to Pocket
         for (const raindrop of raindropsSinceLastSynctime) {
             await this.pocketGateway.addItem({ url: raindrop.link })
         }
+
+        console.log(`Syncing these raindrop items: ${raindropsSinceLastSynctime.map(raindrop => raindrop.link )}`)
+        console.log(`The current time is: ${DateTime.now().toLocaleString(DateTime.DATETIME_MED)}`)
 
         // Update last sync time after all items have been synced.
         this.lastSyncTime = parseInt(DateTime.now().toSeconds().toFixed(0), 10)
