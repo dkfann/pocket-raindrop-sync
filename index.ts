@@ -56,7 +56,7 @@ app.post('/sync', async (_, res) => {
     }
 })
 
-app.listen(3000, async () => {
+app.listen(8080, async () => {
     console.log('Started server')
     bree.start()
 })
