@@ -40,6 +40,7 @@ export class RaindropGateway {
     }
 
     public async addRaindrop({ link }: { link: string }) {
+        console.log(`In addRaindrop, the link is: ${link}`)
         const results = await fetch(`https://api.raindrop.io/rest/v1/raindrop`, {
             method: 'POST',
             headers: {
@@ -53,6 +54,8 @@ export class RaindropGateway {
         })
 
         const data = await results.json()
+
+        console.log(`The result: ${JSON.stringify(data)}`)
 
         return data
     }
