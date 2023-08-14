@@ -20,9 +20,9 @@ export class SyncController {
     );
 
     console.log(
-      `The last sync time: ${DateTime.fromSeconds(
-        this.lastSyncTime
-      ).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}`
+      `The last sync time: ${DateTime.fromSeconds(this.lastSyncTime)
+        .setZone("America/Los_Angeles")
+        .toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}`
     );
   }
 
