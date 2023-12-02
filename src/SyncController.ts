@@ -122,4 +122,19 @@ export class SyncController {
       10
     );
   }
+
+  async manualSyncPocketToRaindrop(since: number) {
+    try {
+      const pocketItemsSinceSyncTime =
+        (await this.pocketGateway.getSavedItems(100, { since })) || [];
+
+      for (const item of pocketItemsSinceSyncTime) {
+        const raindrop = await this.raindropGateway.addRaindrop({
+          link: item.resolved_url,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
