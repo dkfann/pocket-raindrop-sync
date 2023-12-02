@@ -56,6 +56,17 @@ app.post("/sync", async (_, res) => {
   }
 });
 
+app.post("/manual-pocket-sync", async (req, res) => {
+  try {
+    await syncController.manualSyncPocketToRaindrop(req.body.since);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(
+      `Something went wrong with performing the manual pocket sync: ${error}`
+    );
+  }
+});
+
 app.listen(8080, async () => {
   console.log("Started server");
   bree.start();
