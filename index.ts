@@ -3,24 +3,12 @@ import { SyncController } from "./src/SyncController";
 import { PocketGateway } from "./src/PocketGateway";
 import { RaindropGateway } from "./src/RaindropGateway";
 import dotenv from "dotenv";
-import Bree from "bree";
-import path from "path";
 
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
-
-const bree = new Bree({
-  jobs: [
-    {
-      name: "syncJob.ts",
-      path: path.join(__dirname, "src", "syncJob.ts"),
-      interval: "1h",
-    },
-  ],
-});
 
 const pocketConsumerKey = process.env.POCKET_CONSUMER_KEY!;
 const pocketAccessToken = process.env.POCKET_ACCESS_TOKEN!;
@@ -69,5 +57,4 @@ app.post("/manual-pocket-sync", async (req, res) => {
 
 app.listen(8080, async () => {
   console.log("Started server");
-  bree.start();
 });
