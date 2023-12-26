@@ -63,6 +63,8 @@ app.listen(8080, async () => {
 
   try {
     await syncController.manualSyncPocketToRaindrop(oneHourAgo.toSeconds());
+
+    console.log("Sync completed!");
   } catch (error) {
     console.error(
       `Something went wrong with doing the sync at ${oneHourAgo.toLocaleString(
