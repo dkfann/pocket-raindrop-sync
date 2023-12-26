@@ -3,6 +3,7 @@ import { SyncController } from "./src/SyncController";
 import { PocketGateway } from "./src/PocketGateway";
 import { RaindropGateway } from "./src/RaindropGateway";
 import dotenv from "dotenv";
+import { DateTime } from "luxon";
 
 dotenv.config();
 
@@ -57,4 +58,16 @@ app.post("/manual-pocket-sync", async (req, res) => {
 
 app.listen(8080, async () => {
   console.log("Started server");
+
+  const oneHourAgo = DateTime.now().minus({ hour: 1, seconds: 1 });
+
+  try {
+    await syncController.manualSyncPocketToRaindrop(oneHourAgo.toSeconds());
+  } catch (error) {
+    console.error(
+      `Something went wrong with doing the sync at ${oneHourAgo.toLocaleString(
+        DateTime.DATETIME_MED
+      )}: ${error}`
+    );
+  }
 });
